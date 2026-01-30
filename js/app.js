@@ -93,6 +93,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Auto-Search Logic
+    const bloodGroupSearch = document.getElementById('bloodGroup');
+    const citySearch = document.getElementById('city');
+
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    if (bloodGroupSearch && citySearch) {
+        // Immediate search for dropdown
+        bloodGroupSearch.addEventListener('change', () => {
+            searchDonors();
+        });
+
+        // Debounced search for text input
+        citySearch.addEventListener('input', debounce(() => {
+            searchDonors();
+        }, 500));
+    }
+
     // Contact Form Validation
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
@@ -148,7 +172,7 @@ async function searchDonors() {
     showSkeletonLoader(true);
     noResults.style.display = 'none';
 
-    // Simulate network delay for UX
+    // Simulate network delay for UX (Reduced for auto-search feel)
     setTimeout(async () => {
         let donors = getDonors(); // Fetch from LocalStorage
 
@@ -165,7 +189,7 @@ async function searchDonors() {
             donorsGrid.innerHTML = ''; // Clear skeleton
             noResults.style.display = 'block';
         }
-    }, 800);
+    }, 500);
 }
 
 function renderDonors(donors) {
